@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">GithubUser</string>
+    <string name="search_bar">Search Bar</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="info_halutama">Gunakan Search Bar \n untuk menampilkan List User</string>
+    <string name="app_logo">App Logo</string>
+    <string name="repositories">Repositories (%d)</string>
+    <string name="follower">follower (%d)</string>
+    <string name="following">following (%d)</string>
+    <string name="list_favorit">List Favorit</string>
+    <string name="masuk_ke_dark_mode">Dark Mode</string>
+    <string name="add_to_favorite">Add To Favorite</string>
+    <string name="listUserFavoriteActionBar">List User Favorite</string>
+    <string name="cari_seseorang">Cari Seseorang</string>
+    <string name="nulll">null</string>
+</resources>

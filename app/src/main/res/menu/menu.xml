@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+     <item
+         android:id="@+id/menu_search"
+         android:title="@string/search_bar"
+         android:icon="@drawable/ic_baseline_search_24"
+         app:showAsAction="always|collapseActionView"
+         app:actionViewClass="android.widget.SearchView"
+         />
+     <item
+         android:id="@+id/menu_favorites"
+         android:title="@string/list_favorit"
+         app:showAsAction="never"/>
+     <item
+         android:id="@+id/menu_gantiTema"
+         android:title="@string/masuk_ke_dark_mode"
+         app:showAsAction="never"
+         android:checkable="true"
+         app:actionViewClass="android.widget.CheckBox"/>
+
+</menu>
