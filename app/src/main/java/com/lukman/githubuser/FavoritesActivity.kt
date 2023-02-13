@@ -1,14 +1,19 @@
 package com.lukman.githubuser
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lukman.githubuser.Adapter.FavoriteListAdapter
 import com.lukman.githubuser.Helper.OnItemGetClickced
+import com.lukman.githubuser.Helper.SettingPreference
 import com.lukman.githubuser.Helper.ViewModelFactory
 import com.lukman.githubuser.ViewModel.FavoriteViewModel
 import com.lukman.githubuser.data.local.Entity.UserFavorite
@@ -19,14 +24,18 @@ class FavoritesActivity : AppCompatActivity() {
     private val binding get() = _binding
     private lateinit var favoriteViewModel: FavoriteViewModel
     private lateinit var adapter:FavoriteListAdapter
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Setting")
+    private lateinit var settingPreference:SettingPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityFavoritesBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        settingPreference = SettingPreference.getInstance(dataStore)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = getString(R.string.listUserFavoriteActionBar)
         favoriteViewModel = obtainViewModel(this)
+
         val listFavoritesObserver = Observer<List<UserFavorite>>{ listUserFavorite ->
             if(listUserFavorite!=null){
                 adapter.setListFavUser(listUserFavorite)
@@ -49,7 +58,7 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun obtainViewModel(activity: AppCompatActivity):FavoriteViewModel{
-        val factory = ViewModelFactory.getInstance(activity.application)
+        val factory = ViewModelFactory.getInstance(activity.application, settingPreference)
         return ViewModelProvider(activity, factory)[FavoriteViewModel::class.java]
     }
 

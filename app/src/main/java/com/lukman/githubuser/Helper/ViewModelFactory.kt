@@ -8,14 +8,14 @@ import com.lukman.githubuser.ViewModel.FavoriteViewModel
 import com.lukman.githubuser.ViewModel.MainViewModel
 import com.lukman.githubuser.ViewModel.SplashViewModel
 
-class ViewModelFactory private constructor(private val mApplication: Application):ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory private constructor(private val mApplication: Application, private val settingPreference: SettingPreference):ViewModelProvider.NewInstanceFactory() {
     companion object{
         @Volatile
         private var instance:ViewModelFactory?=null
 
-        fun getInstance(application: Application):ViewModelFactory{
+        fun getInstance(application: Application, settingPreference: SettingPreference):ViewModelFactory{
             return instance?: synchronized(ViewModelFactory::class.java){
-                instance = ViewModelFactory(application)
+                instance = ViewModelFactory(application, settingPreference)
                 instance as ViewModelFactory
             }
         }
@@ -30,7 +30,7 @@ class ViewModelFactory private constructor(private val mApplication: Application
         }else if(modelClass.isAssignableFrom(SplashViewModel::class.java)){
             return SplashViewModel(mApplication) as T
         }else if(modelClass.isAssignableFrom(MainViewModel::class.java)){
-            return MainViewModel(mApplication) as T
+            return MainViewModel(mApplication, settingPreference) as T
         }
         throw IllegalArgumentException("Unknown ViewModel Class : ${modelClass.name}")
     }

@@ -8,12 +8,14 @@ import com.lukman.githubuser.ItemSearchUser
 import com.lukman.githubuser.SearchUser
 import com.lukman.githubuser.SingleEvent.Event
 import com.lukman.githubuser.data.UserFavoriteRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainViewModel(application: Application) : ViewModel() {
+class MainViewModel(application: Application, settingPreference: SettingPreference) : ViewModel() {
     private val userFavoriteRepository = UserFavoriteRepository(application)
 
     private val _listUsers = MutableLiveData<ArrayList<ItemSearchUser>>()
@@ -27,6 +29,9 @@ class MainViewModel(application: Application) : ViewModel() {
 
     private val _query = MutableLiveData<String>()
     val query: LiveData<String> = _query
+
+    private val _isDarkModeActive = MutableLiveData<Boolean>()
+    val isDarkModeActive:LiveData<Boolean> = _isDarkModeActive
 
     fun getListUsersOnSearchBar(username: String) {
         _isLoading.value = true
@@ -47,17 +52,25 @@ class MainViewModel(application: Application) : ViewModel() {
         })
     }
 
-    fun getThemeSetting(preference: SettingPreference):LiveData<Boolean>{
-        return userFavoriteRepository.getThemeSetting(preference)
+    private fun getThemeSetting(preference: SettingPreference){
+        viewModelScope.launch(Dispatchers.IO){
+            val preferences = userFavoriteRepository.getThemeSetting(preference)
+            _isDarkModeActive.postValue(preferences[SettingPreference.THEME_KEY])
+        }
     }
 
     fun saveThemeSetting(preference: SettingPreference, isDarkModeActive:Boolean){
         viewModelScope.launch {
-            userFavoriteRepository.saveThemeSetting(preference, isDarkModeActive)
+            withContext(Dispatchers.IO){
+                userFavoriteRepository.saveThemeSetting(preference, isDarkModeActive)
+            }
+            getThemeSetting(preference)
         }
     }
 
-
+    init {
+        getThemeSetting(settingPreference)
+    }
     companion object {
         var isRvAllowedToDisplay = false
     }

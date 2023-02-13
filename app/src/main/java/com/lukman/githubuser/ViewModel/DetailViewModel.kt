@@ -122,11 +122,11 @@ class DetailViewModel(application: Application) : ViewModel() {
 
     }
 
-    suspend fun addThisUserToFavorite(userFavorite: UserFavorite){
+    private suspend fun addThisUserToFavorite(userFavorite: UserFavorite){
         userFavoriteRepository.tambahUserKeFavorite(userFavorite)
     }
 
-    suspend fun deleteThisUserFromFavorite(userFavorite: UserFavorite){
+    private suspend fun deleteThisUserFromFavorite(userFavorite: UserFavorite){
         userFavoriteRepository.hapusUserDariFavorite(userFavorite)
 
     }

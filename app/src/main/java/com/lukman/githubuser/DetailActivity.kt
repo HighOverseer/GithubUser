@@ -1,6 +1,7 @@
 package com.lukman.githubuser
 
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,12 +9,16 @@ import android.view.MenuItem
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lukman.githubuser.Adapter.ViewPagerAdapter
+import com.lukman.githubuser.Helper.SettingPreference
 import com.lukman.githubuser.Helper.ViewModelFactory
 import com.lukman.githubuser.SingleEvent.Event
 import com.lukman.githubuser.ViewModel.DetailViewModel
@@ -25,12 +30,15 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var detailViewModel:DetailViewModel
     private lateinit var userDetail: UserDetail
     private var mIsFavorite:Boolean = false
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "Setting")
+    private lateinit var settingPreference: SettingPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         checkDarkMode()
+        settingPreference = SettingPreference.getInstance(dataStore)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         detailViewModel = obtainViewModel(this@DetailActivity)
 
@@ -149,7 +157,7 @@ class DetailActivity : AppCompatActivity() {
     private fun getUsername() = intent.getStringExtra(EXTRA_USER)
 
     private fun obtainViewModel(activity: AppCompatActivity):DetailViewModel{
-        val factory = ViewModelFactory.getInstance(activity.application)
+        val factory = ViewModelFactory.getInstance(activity.application, settingPreference)
         return ViewModelProvider(activity, factory)[DetailViewModel::class.java]
     }
 

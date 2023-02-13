@@ -9,7 +9,4 @@ import com.lukman.githubuser.data.UserFavoriteRepository
 class SplashViewModel(application: Application):ViewModel() {
     private val userFavoriteRepository = UserFavoriteRepository(application)
 
-    fun getThemeSetting(preference: SettingPreference):LiveData<Boolean>{
-        return userFavoriteRepository.getThemeSetting(preference)
-    }
 }

@@ -7,6 +7,7 @@ import com.lukman.githubuser.Helper.SettingPreference
 import com.lukman.githubuser.data.local.Entity.UserFavorite
 import com.lukman.githubuser.data.local.Room.UserFavoriteDao
 import com.lukman.githubuser.data.local.Room.UserFavoriteDatabase
+import androidx.datastore.preferences.core.Preferences
 
 class UserFavoriteRepository(application:Application) {
     private val userFavoriteDao:UserFavoriteDao
@@ -31,8 +32,8 @@ class UserFavoriteRepository(application:Application) {
         return userFavoriteDao.IsUserFavorite(userId)
     }
 
-    fun getThemeSetting(preference: SettingPreference):LiveData<Boolean>{
-        return preference.getThemeSetting().asLiveData()
+    suspend fun getThemeSetting(preference: SettingPreference):Preferences{
+        return preference.getThemeSettingNonFlow()
     }
 
     suspend fun saveThemeSetting(preference: SettingPreference, isDarkModeActive:Boolean){

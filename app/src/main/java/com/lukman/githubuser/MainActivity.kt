@@ -44,31 +44,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        mainViewModel = obtainViewModel(this@MainActivity)
         pref = SettingPreference.getInstance(dataStore)
-
-        val getThemeSettingObserver = Observer<Boolean>{ isDarkModeActive->
-            if(isDarkModeActive){
-                val isAlreadyInDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                if(isAlreadyInDarkMode == Configuration.UI_MODE_NIGHT_YES){
-                    binding.tvInfo.setTextColor(ResourcesCompat.getColor(resources, R.color.white, null))
-                }else if(isAlreadyInDarkMode == Configuration.UI_MODE_NIGHT_NO){
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    binding.tvInfo.setTextColor(ResourcesCompat.getColor(resources, R.color.white, null))
-                }
-            }else{
-                val isAlreadyNotInDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                if(isAlreadyNotInDarkMode == Configuration.UI_MODE_NIGHT_NO){
-                    binding.tvInfo.setTextColor(ResourcesCompat.getColor(resources, R.color.black, null))
-                }else if(isAlreadyNotInDarkMode == Configuration.UI_MODE_NIGHT_YES){
-                    binding.tvInfo.setTextColor(ResourcesCompat.getColor(resources, R.color.black, null))
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                }
-
-
-            }
-        }
-        mainViewModel.getThemeSetting(pref).observe(this, getThemeSettingObserver)
+        mainViewModel = obtainViewModel(this@MainActivity)
 
 
         val listUsersOnSearchObserver = Observer<ArrayList<ItemSearchUser>> {
@@ -109,6 +86,19 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        val getThemeSettingObserver = Observer<Boolean>{ isDarkModeActive->
+            if(isDarkModeActive){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                binding.tvInfo.setTextColor(ResourcesCompat.getColor(resources, R.color.white, null))
+            }else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                binding.tvInfo.setTextColor(ResourcesCompat.getColor(resources, R.color.black, null))
+            }
+        }
+        mainViewModel.isDarkModeActive.observe(this, getThemeSettingObserver)
+    }
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
@@ -227,7 +217,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun obtainViewModel(activity: AppCompatActivity): MainViewModel {
-        val factory = ViewModelFactory.getInstance(activity.application)
+        val factory = ViewModelFactory.getInstance(activity.application, pref)
         return ViewModelProvider(activity, factory)[MainViewModel::class.java]
     }
 
